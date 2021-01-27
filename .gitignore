@@ -6,10 +6,8 @@ Figures/*
 Output/*
 Paper/*
 Data/*
-Data/
 *.Rproj
 *.xlsx
-.xlsx
 *.xls
 *.pdf
 *.svg

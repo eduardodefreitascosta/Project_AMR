@@ -5,7 +5,7 @@ library(here)
 source(here("Scripts","full_mdr.R"))
 
 #Marcadores
-source(here("Scripts","marcadores.R"))
+source(here("Scripts","resistance_atm.R"))
 
 #Comparação de médias
 source(here("Scripts","medias.R"))
