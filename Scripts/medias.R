@@ -80,7 +80,7 @@ library(optimx)
 
 
 #####################
-#Análise Log10cafu/g#
+#An?lise Log10cafu/g#
 #####################
 
 #Importar dados
@@ -173,14 +173,14 @@ p1 + theme_bw() + theme(legend.position = "bottom")
 
 
 #Rodar o modelo multivariavel linear misto para coli
-mod<- lmer(logcoli~time*group+logcolisow+(1|sow:animal),REML=TRUE,data=carol,control = lmerControl(optimizer = "optimx", calc.derivs = FALSE,
+mod<- lmer(logcoli~time*group+logcolisow+(1|sow/Animal),REML=TRUE,data=carol,control = lmerControl(optimizer = "optimx", calc.derivs = FALSE,
            optCtrl = list(method = "nlminb", starttests = FALSE, kkt = FALSE)),na.action = na.omit )
 
 
 summary(mod)
 Anova(mod)
-lsmeans(mod, pairwise ~ time|group)
-lsmeans(mod, pairwise ~ group|time)
+lsmeans(mod, pairwise ~ time|group,adjust="tukey")
+lsmeans(mod, pairwise ~ group|time,adjust="tukey")
 
 
 plot(mod)
@@ -190,11 +190,11 @@ acf(residuals(mod))
 vif(mod)
 
 #rodar o modelo multivariavel misto para entero
-mod1<- lmer(logentero~time*group+logenterosow+(1|sow:animal),REML=TRUE,data=carol,optCtrl = list(method = "nlminb", starttests = FALSE, kkt = FALSE))
+mod1<- lmer(logentero~time*group+logenterosow+(1|sow/Animal),data=carol)
 summary(mod1)
 Anova(mod1)
-lsmeans(mod1, pairwise ~ time|group)
-lsmeans(mod1, pairwise ~ group|time)
+lsmeans(mod1, pairwise ~ time|group,adjust="tukey")
+lsmeans(mod1, pairwise ~ group|time,adjust="tukey")
 
 plot(mod1)
 qqnorm(residuals(mod1))

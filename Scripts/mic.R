@@ -1,199 +1,92 @@
 
 library(readxl)
 library(here)
+library(lme4)
+library(tidyverse)
 
 mic <- read_excel(here("Data","mic.xlsx"))
-
 mic$MIC<-as.numeric(mic$MIC)
+mic$Animal<-as.factor(mic$Animal)
+
+animal <- read_excel(here("Data","enumeration.xlsx"),sheet = "animal")
+animal$Animal<-as.factor(animal$Animal)
 
 
-dose4prob = function(b0,b1,prob){
-  d = (-b0+log(-prob/(prob-1)))/b1
+mic<-left_join(mic,animal,by=c("Animal"))
+
+
+
+dose4prob2 = function(b0,b1,b2,b3,prob){
+  d = (log(prob/(1-prob))-(b0+b2+b3))/(b1)
   return(d)
 }
+
+
+
 G<-c("G1","G2","G3","G4")
 Z<-c("nursery","grower/finisher")
 
-par(mfrow=c(2,2))
 
-summary(glm(mic$Result[mic$Group=="G1" & mic$Zootecnic=="nursery"] ~ mic$MIC[mic$Group=="G1"& mic$Zootecnic=="nursery"],
-            family=binomial,
-            data=mic)->exp.glm)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
+summary(glmer(Result~MIC+Group+Zootecnic+(1|Sow/Animal),family=binomial,data=mic)->exp.glm)
 
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
+exp.glm<-summary(exp.glm)
 
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
+#MIC50%
 
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0,coef(exp.glm)[[6]],0.5) #Nursery, G1
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[3]],coef(exp.glm)[[6]],0.5) #Nursery, G2
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[4]],coef(exp.glm)[[6]],0.5) #Nursery, G3
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[5]],coef(exp.glm)[[6]],0.5) #Nursery, G4
 
-text(3,0.1, "MIC50")
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0,0,0.5) #G/F, G1
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[3]],0,0.5) #G/F, G2
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[4]],0,0.5) #G/F, G3
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[5]],0,0.5) #G/F, G4
 
-text(3,0.15, "MIC90")
-text(0,1.1,"A", xpd=NA)
-##################
 
-summary(glm(mic$Result[mic$Group=="G2"& mic$Zootecnic=="nursery"] ~ mic$MIC[mic$Group=="G2"& mic$Zootecnic=="nursery"],
-            family=binomial,
-            data=mic)->exp.glm)
+#MIC90%
 
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0,coef(exp.glm)[[6]],0.9) #Nursery, G1
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[3]],coef(exp.glm)[[6]],0.9) #Nursery, G2
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[4]],coef(exp.glm)[[6]],0.9) #Nursery, G3
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[5]],coef(exp.glm)[[6]],0.9) #Nursery, G4
 
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0,0,0.9) #G/F, G1
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[3]],0,0.9) #G/F, G2
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[4]],0,0.9) #G/F, G3
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[5]],0,0.9) #G/F, G4
 
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
 
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
+###################
+#Linear regression#
+###################
 
-rect(2,par("usr")[3],4,par("usr")[4],col="grey")
-rect(2,par("usr")[3],4,par("usr")[4],col="grey")
+#MIC90%
 
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
+mics<-c(
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0,coef(exp.glm)[[6]],0.9), #Nursery, G1
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[3]],coef(exp.glm)[[6]],0.9), #Nursery, G2
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[4]],coef(exp.glm)[[6]],0.9), #Nursery, G3
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[5]],coef(exp.glm)[[6]],0.9), #Nursery, G4
 
-text(2.5,0.1, "MIC50")
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0,0,0.9), #G/F, G1
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[3]],0,0.9), #G/F, G2
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[4]],0,0.9), #G/F, G3
+dose4prob2(coef(exp.glm)[[1]],coef(exp.glm)[[2]],coef(exp.glm)[[5]],0,0.9) #G/F, G4
+)
 
-text(2.5,0.15, "MIC90")
-text(0,1.1,"B", xpd=NA)
-##################
 
-summary(glm(mic$Result[mic$Group=="G3"& mic$Zootecnic=="nursery"] ~ mic$MIC[mic$Group=="G3"& mic$Zootecnic=="nursery"],
-            family=binomial,
-            data=mic)->exp.glm)
+dias<-c(0,10,24,10,0,0,0,0)
 
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
+plot(mics,dias)
 
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
+summary(lm(mics~dias)->ln1)
 
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
+plot(ln1)
 
-rect(4,par("usr")[3],8,par("usr")[4],col="gray")
-rect(4,par("usr")[3],8,par("usr")[4],col="gray")
+plot(dias,mics)
 
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
+lines(predict(ln1),dias)
 
-text(5.5,0.1, "MIC50")
-
-text(5.5,0.15, "MIC90")
-text(0,1.1,"C", xpd=NA)
-##################
-
-summary(glm(mic$Result[mic$Group=="G4"& mic$Zootecnic=="nursery"] ~ mic$MIC[mic$Group=="G4"& mic$Zootecnic=="nursery"],
-            family=binomial,
-            data=mic)->exp.glm)
-
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
-
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
-
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-rect(4,par("usr")[3],8,par("usr")[4],col="gray")
-
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
-
-text(2.5,0.1, "MIC50")
-
-text(4.5,0.1, "MIC90")
-text(0,1.1,"D", xpd=NA)
-
-
-
-mtext("MIC 50 and MIC 90 for Nursery", side = 3, line = -2, outer = TRUE)
-##########################################################################################################################################
-
-
-
-summary(glm(mic$Result[mic$Group=="G1" & mic$Zootecnic=="grower/finisher"] ~ mic$MIC[mic$Group=="G1"& mic$Zootecnic=="grower/finisher"],
-            family=binomial,
-            data=mic)->exp.glm)
-
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
-
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
-
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
-
-text(2.5,0.1, "MIC50")
-
-text(2.5,0.15, "MIC90")
-text(0,1.1,"A", xpd=NA)
-##################
-
-summary(glm(mic$Result[mic$Group=="G2"& mic$Zootecnic=="grower/finisher"] ~ mic$MIC[mic$Group=="G2"& mic$Zootecnic=="grower/finisher"],
-            family=binomial,
-            data=mic)->exp.glm)
-
-
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
-
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
-
-rect(1,par("usr")[3],2,par("usr")[4],col="gray")
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
-
-text(1.5,0.1, "MIC50")
-
-text(2.5,0.1, "MIC90")
-text(0,1.1,"B", xpd=NA)
-##################
-
-summary(glm(mic$Result[mic$Group=="G3"& mic$Zootecnic=="grower/finisher"] ~ mic$MIC[mic$Group=="G3"& mic$Zootecnic=="grower/finisher"],
-            family=binomial,
-            data=mic)->exp.glm)
-
-
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
-
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
-
-rect(1,par("usr")[3],2,par("usr")[4],col="gray")
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
-
-text(1.5,0.1, "MIC50")
-
-text(2.5,0.1, "MIC90")
-text(0,1.1,"C", xpd=NA)
-##################
-
-summary(glm(mic$Result[mic$Group=="G4"& mic$Zootecnic=="grower/finisher"] ~ mic$MIC[mic$Group=="G4"& mic$Zootecnic=="grower/finisher"],
-            family=binomial,
-            data=mic)->exp.glm)
-
-####
-plot(seq(0,15,0.1), 1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="n",ylab="Percentage of inibition",xlab="Antimicrobial concentration (mg/mL)")
-
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.5)
-dose4prob(coef(exp.glm)[[1]],coef(exp.glm)[[2]],0.9)
-
-rect(2,par("usr")[3],4,par("usr")[4],col="gray")
-rect(4,par("usr")[3],8,par("usr")[4],col="gray")
-
-lines(seq(0,15,0.1),1/(1+exp(-(exp.glm$coefficients[1]+exp.glm$coefficients[2]*seq(0,15,0.1)))),type="l")
-
-text(2.5,0.1, "MIC50")
-
-text(4.5,0.1, "MIC90")
-text(0,1.1,"D", xpd=NA)
-mtext("MIC 50 and MIC 90 for Growing/finishing", side = 3, line = -2, outer = TRUE)
-##########################################################################################################################################
-
-
+plot(mics,predict(ln1))
 
