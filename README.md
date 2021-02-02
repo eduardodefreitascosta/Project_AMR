@@ -1,4 +1,4 @@
-# Projeto_Carol
+# Project_AMR
 
 AMR analysis in pigs. The user must save all folders and files in a local place.
 
