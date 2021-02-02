@@ -1,21 +1,14 @@
-library(ggplot2)
-library(readxl)
-library(dplyr)
-library(multcompView)
-library(lsmeans)
-library(tidyr)
-library(here)
-library(lme4)
-library(logistf)
+
 
 #########
 # E coli#
 #########
 
-
+#Read data
 coli <- read_excel(here("Data","coli.xlsx"), sheet = "coli")
 animal <- read_excel(here("Data","enumeration.xlsx"), sheet = "animal")
 
+#Tidy data
 coli$Animal<-as.character(coli$Animal)
 animal$Animal<-as.character(animal$Animal)
 
@@ -27,6 +20,7 @@ coli2<-coli%>%
 
 coli_wide <- spread(coli2, Antibiotic, Result)
 
+#Run the models
 vetor<-list()
 
 for (i in 9:19){
@@ -61,8 +55,10 @@ capture.output(margin2, file =here("Output", "output2_coli.csv"))
 # Enterococcus#
 ###############
 
+#Read data
 enterococcus <- read_excel(here("Data","enterococcus.xlsx"), sheet = "enterococcus")
 
+#Tidy data
 enterococcus$Animal<-as.character(enterococcus$Animal)
 
 enterococcus<-left_join(enterococcus,animal,by="Animal")
@@ -72,6 +68,7 @@ enterococcus2<-subset(enterococcus, zootecnic %in%c( "nursery" , "finisher") & A
 
 enterococcus_wide <- spread(enterococcus2, Antibiotic, Result)
 
+#Run the models
 vetor<-list()
 
 for (i in 7:11){
@@ -96,7 +93,7 @@ for (i in 7:11){
   
 }
 
-
+#Alternative firth model
 f_log1<-logistf(Erytromicin~Group*zootecnic,data=enterococcus_wide)
 summary(f_log1)
 

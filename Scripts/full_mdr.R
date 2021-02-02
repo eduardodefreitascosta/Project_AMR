@@ -1,8 +1,4 @@
-library(ggplot2)
-library(car)
-library(readxl)
-library(here)
-library(knitr)
+
 ##############
 #E. coli     #
 ##############
@@ -110,7 +106,7 @@ vif(mod3)
 
 
 ###########
-#Graficos#
+#Graphics#
 ###########
 
 

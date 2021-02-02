@@ -1,94 +1,15 @@
-#################################
-#Instalando e carregando pacotes#
-#################################
-
-
-if(!require(knitr)){
-  install.packages("knitr")
-}
-library(knitr)
-
-if(!require(ggplot2)){
-  install.packages("ggplot2")
-}
-library(ggplot2)
-
-
-if(!require(MASS)){
-  install.packages("MASS")
-}
-library(MASS)
-
-if(!require(car)){
-  install.packages("car")
-}
-library(car)
-
-if(!require(lmm)){
-  install.packages("lmm")
-}
-library(lmm)
-
-
-if(!require(lme4)){
-  install.packages("lme4")
-}
-library(lme4)
-
-
-if(!require(here)){
-  install.packages("here")
-}
-library(here)
-
-if(!require(haven)){
-  install.packages("haven")
-}
-library(haven)
-
-if(!require(tidyr)){
-  install.packages("tidyr")
-}
-library(tidyr)
-
-if(!require(dplyr)){
-  install.packages("dplyr")
-}
-library(dplyr)
-
-if(!require(readxl)){
-  install.packages("readxl")
-}
-
-library(readxl)
-
-if(!require(lsmeans)){
-  install.packages("lsmeans")
-}
-  library(lsmeans)
-
-if(!require(mgcv)){
-  install.packages("mgcv")
-}
-
-library(mgcv)
-
-if (!require(optimx)){
-  install.packages("optimx")
-} 
-library(optimx)
-
 
 #####################
-#An?lise Log10cafu/g#
+#Analisys Log10cfu/g#
 #####################
 
-#Importar dados
+#Import data
 carol <- read_excel(here("Data","enumeration.xlsx"), 
                            col_types = c("text", "text", "numeric", 
                                                    "text", "text", "numeric", "numeric", "numeric",
                                           "numeric", "numeric", "numeric"))
-#comparar medias de porcas por grupo
+
+#Compare means per group
 
 summary(aov(logcolisow~group, data=carol))
 
@@ -97,7 +18,7 @@ summary(aov(logenterosow~group, data=carol))
 
 
 
-#fazer os histogramas de distribuicao coli
+#Histograms for E. coli
 par(mfrow=c(2,2))
 for (i in 1:4){
 hist(carol$logcoli[carol$group==paste("G",i,sep='')],
@@ -108,7 +29,7 @@ main=paste("G",i,sep='')
 }
 
 
-#fazer os histogramas de distribuicao de entero
+#Histograms for Enterococcus
 par(mfrow=c(2,2))
 for (i in 1:4){
   hist(carol$logentero[carol$group==paste("G",i,sep='')],
@@ -119,7 +40,7 @@ for (i in 1:4){
 }
 
 
-#Resumir os dados em tabela 
+#Summary table
 data.resume <- carol %>% 
   group_by(group, time) %>% 
   summarise(logcoli.m = mean(logcoli,na.rm=T), 
@@ -130,14 +51,14 @@ data.resume <- carol %>%
   
 
 
-#gerar os dados de resumo
+#Summary data
 kable(data.resume)
 kable(matrix(unlist((data.resume[,3])),nrow=4,ncol=4,byrow=T))
 kable(matrix(unlist(data.resume[,4]),nrow=4,ncol=4,byrow=T))
 
 
 
-# gerar o grafico de mudanca temporal de coli
+# Time point E. coli
 p <- ggplot(data = data.resume,
             mapping = aes(x = as.numeric(time),
                           y = logcoli.m,
@@ -154,7 +75,7 @@ p <- ggplot(data = data.resume,
 p + theme_bw() + theme(legend.position = "bottom")
 
 
-#gerar o grafico de mudanca temporal de entero
+#Time point Enterococcus
 p1 <- ggplot(data = data.resume,
             mapping = aes(x = as.numeric(time),
                           y = logentero.m,
@@ -172,7 +93,7 @@ p1 + theme_bw() + theme(legend.position = "bottom")
 
 
 
-#Rodar o modelo multivariavel linear misto para coli
+#MIxed model for E. coli
 mod<- lmer(logcoli~time*group+logcolisow+(1|sow/Animal),REML=TRUE,data=carol,control = lmerControl(optimizer = "optimx", calc.derivs = FALSE,
            optCtrl = list(method = "nlminb", starttests = FALSE, kkt = FALSE)),na.action = na.omit )
 
@@ -189,7 +110,7 @@ hist(residuals(mod))
 acf(residuals(mod))
 vif(mod)
 
-#rodar o modelo multivariavel misto para entero
+#Mixed model for Enterococcus
 mod1<- lmer(logentero~time*group+logenterosow+(1|sow/Animal),data=carol)
 summary(mod1)
 Anova(mod1)
@@ -201,13 +122,3 @@ qqnorm(residuals(mod1))
 hist(residuals(mod1))
 acf(residuals(mod1))
 vif(mod1)
-
-
-
-
-
-
-
-
-
-

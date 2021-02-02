@@ -6,7 +6,7 @@ Figures/*
 Output/*
 Paper/*
 Data/*
-*.Rproj
+
 *.xlsx
 *.xls
 *.pdf

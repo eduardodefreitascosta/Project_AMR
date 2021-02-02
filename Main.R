@@ -1,13 +1,30 @@
+#################################
+#Install and load packages      #
+#################################
 
-library(here)
+#Packages to be used
+packages<-c("readxl","here","tidyverse","ggplot2","fmsb","knitr","multcompView",
+            "logistf","MASS", "car", "lmm","lme4","here", "haven","tidyr","dplyr",
+            "lsmeans", "mgcv","optimx")
+
+
+# Install packages not yet installed
+installed_packages <- packages %in% rownames(installed.packages())
+if (any(installed_packages == FALSE)) {
+  install.packages(packages[!installed_packages])
+}
+
+# Packages loading
+invisible(lapply(packages, library, character.only = TRUE))
+
 
 #MDR or full susceptible
 source(here("Scripts","full_mdr.R"))
 
-#Marcadores
+#ATM resistance
 source(here("Scripts","resistance_atm.R"))
 
-#Comparação de médias
+#Log mean comparisson
 source(here("Scripts","medias.R"))
 
 
