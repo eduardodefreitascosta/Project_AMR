@@ -5,7 +5,7 @@
 #Packages to be used
 packages<-c("readxl","here","tidyverse","ggplot2","fmsb","knitr","multcompView",
             "logistf","MASS", "car", "lmm","lme4","here", "haven","tidyr","dplyr",
-            "lsmeans", "mgcv","optimx")
+            "lsmeans", "mgcv","optimx","flexsurv","survminer")
 
 
 # Install packages not yet installed

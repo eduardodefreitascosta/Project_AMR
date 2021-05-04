@@ -78,3 +78,52 @@ dias<-c(0,10,24,10,0,0,0,0)
 
 #Linear model
 summary(lm(mics~dias)->ln1)
+
+
+
+################
+# Gamma model  #
+################
+
+mic <- read_excel(here("Data","mic_reg.xlsx"))
+
+
+reg_mic <- flexsurvreg(Surv(min_coli, max_coli, type="interval2") ~ sorovar , dist="gamma", data = mic)
+
+reg_mic
+
+ggsurvplot(reg_mic, conf.int = TRUE,fun="survival",
+           ggtheme = theme_minimal(),data = mic,ylab="Survival probability",xlab="Dose")
+
+
+summary(reg_mic)
+
+
+mg1<-function(x){
+  rate.1<-( ((reg_mic$res[2]))*exp(reg_mic$res[3]*x))
+  mg1<-reg_mic$res[1]*(1/rate.1)
+  mg1
+}
+#Derby
+mg1(0)
+#Typhimurium
+mg1(1)
+
+
+##MIC (%)
+#Derby
+qgamma(c(0.5,0.9),shape=reg_mic$res[1],scale=1/(reg_mic$res[2]),lower.tail=T)
+
+
+
+#Typhimurium
+qgamma(c(0.5,0.9),shape=reg_mic$res[1],scale=1/(reg_mic$res[2]*exp(reg_mic$res[3])),lower.tail=T)
+
+
+#Quantis
+
+#Derby
+pgamma(c(0.5,1,2,4,8,16),shape=reg_mic$res[1],scale=1/(reg_mic$res[2]),lower.tail=T)
+
+#Typhimurium
+pgamma(c(0.5,1,2,4,8,16),shape=reg_mic$res[1],scale=1/(reg_mic$res[2]*exp(reg_mic$res[3])),lower.tail=T)

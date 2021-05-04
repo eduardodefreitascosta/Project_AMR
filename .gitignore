@@ -11,7 +11,7 @@ Data/*
 *.xls
 *.pdf
 *.svg
-*.docx
+
 *.html
 *.RData
 *.rds
