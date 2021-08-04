@@ -3,7 +3,7 @@
 
 # Description: 
 
-This is a field-trial longitudinal study assessing the effect of different antimicrobial protocols on the resistence of *E. coli* and *Enterococcus* spp in pigs. 
+This is a field-trial longitudinal study assessing the effect of different antimicrobial protocols on the resistence of *E. coli* and *Enterococcus* spp in pigs. :microscope: :microbe: :pill: :dna:
 The results are published in a peer-reviwed paper in *Research in Veterinary Science* journal.
 
 
