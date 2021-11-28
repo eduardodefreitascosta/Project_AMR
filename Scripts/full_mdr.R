@@ -94,20 +94,20 @@ layout(mat = layout.matrix,
        widths = c(2, 2)) # Widths of the two columns
 
 par(mar=c(5,6,2,1))
-plot(eixo,(1/(1+exp(- (mod$coefficients[1] +mod$coefficients[2]*eixo+mod$coefficients[3]*1)))),ylim = c(0.5,1),
+plot(eixo,(1/(1+exp(- (mod$coefficients[1] +mod$coefficients[2]*eixo+mod$coefficients[3]*1)))),ylim = c(0.4,1),
      ylab="Probability of MDR",xlab="Expected total dose/animal (g)",cex.axis=1.5, cex.lab=1.5,lty=1,lwd=3,type="l")
 lines(eixo,(1/(1+exp(- (mod$coefficients[1] +mod$coefficients[2]*eixo+mod$coefficients[3]*0)))),lty=5,lwd=3)
 text(min(eixo), 1.055, paste('A'), xpd=NA,cex=2)
 
 par(mar=c(5,6,2,1))
-plot(eixo,(1/(1+exp(- (mod1$coefficients[1] +mod1$coefficients[2]*eixo+mod1$coefficients[3]*1)))),
+plot(eixo,(1/(1+exp(- (mod1$coefficients[1] +mod1$coefficients[2]*eixo+mod1$coefficients[3]*1)))),ylim=c(0,0.04),
      ylab="Probability of full susceptibility",xlab="Expected total dose/animal (g)",cex.axis=1.5, cex.lab=1.5,lwd=3,lty=1,type="l")
 lines(eixo,(1/(1+exp(- (mod1$coefficients[1] +mod1$coefficients[2]*eixo+mod1$coefficients[3]*0)))),lty=5,lwd=3)
 text(min(eixo), 1.000003, paste('B'), xpd=NA,cex=2)
 
 
 par(mar=c(5,6,2,1))
-plot(eixo,(1/(1+exp(- (mod2$coefficients[1] +mod2$coefficients[2]*eixo+mod2$coefficients[3]*1)))),ylim = c(0.1,0.8),
+plot(eixo,(1/(1+exp(- (mod2$coefficients[1] +mod2$coefficients[2]*eixo+mod2$coefficients[3]*1)))),ylim = c(0.2,0.7),
      ylab="Probability of MDR",xlab="Expected total dose/animal (g)",cex.axis=1.5, cex.lab=1.5,lwd=3,lty=1,type="l")
 lines(eixo,(1/(1+exp(- (mod2$coefficients[1] +mod2$coefficients[2]*eixo+mod2$coefficients[3]*0)))),lty=5,lwd=3)
 text(min(eixo), 0.9, paste('C'), xpd=NA,cex=2)
@@ -155,10 +155,10 @@ text(min(eixo), 0.045, paste('B'), xpd=NA,cex=2)
 
 
 par(mar=c(5,6,3,1))
-plot(eixo,(1/(1+exp(- (1.3 +0.152*eixo+0.76*1)))),ylim=c(0.8,1),
+plot(eixo,(1/(1+exp(- (-1.3 +0.152*eixo+0.76*1)))),ylim=c(0.2,0.7),
      ylab="Probability of MDR",xlab="Expected total dose/animal (g)",cex.axis=1.5, cex.lab=1.5,lwd=3,lty=1,type="l")
-lines(eixo,(1/(1+exp(- (1.3 +0.152*eixo+0.76*0)))),lty=5,lwd=3)
-text(min(eixo), 1.028, paste('C'), xpd=NA,cex=2)
+lines(eixo,(1/(1+exp(- (-1.3 +0.152*eixo+0.76*0)))),lty=5,lwd=3)
+text(min(eixo), 0.758, paste('C'), xpd=NA,cex=2)
 
 
 par(mar=c(5,6,3,1))
