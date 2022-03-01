@@ -2,10 +2,10 @@
 .Rhistory
 .RData
 .Ruserdata
-Figures/*
-Output/*
-Paper/*
-Data/*
+Figures/
+Output/
+Paper/
+Data/
 
 *.xlsx
 *.xls
