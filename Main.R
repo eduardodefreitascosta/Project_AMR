@@ -5,7 +5,10 @@
 #Packages to be used
 packages<-c("readxl","here","tidyverse","ggplot2","fmsb","knitr","multcompView",
             "logistf","MASS", "car", "lmm","lme4","here", "haven","tidyr","dplyr",
-            "lsmeans", "mgcv","optimx","flexsurv","survminer")
+            "lsmeans", "mgcv","optimx","flexsurv","survminer","lmerTest","splines", 
+            "coxme", "gridExtra","BRugs","coda","rjags","rgl","survival","reghelper")
+
+
 
 
 # Install packages not yet installed

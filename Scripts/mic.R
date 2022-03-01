@@ -88,12 +88,12 @@ summary(lm(mics~dias)->ln1)
 mic <- read_excel(here("Data","mic_reg.xlsx"))
 
 
-reg_mic <- flexsurvreg(Surv(min_coli, max_coli, type="interval2") ~ sorovar , dist="gamma", data = mic)
+reg_mic <- flexsurvreg(Surv(min_coli, max_coli, type="interval2") ~ sorovar , dist="gamma", data = carol)
 
 reg_mic
 
 ggsurvplot(reg_mic, conf.int = TRUE,fun="survival",
-           ggtheme = theme_minimal(),data = mic,ylab="Survival probability",xlab="Dose")
+           ggtheme = theme_minimal(),data = carol,ylab="Survival probability",xlab="Dose")
 
 
 summary(reg_mic)
